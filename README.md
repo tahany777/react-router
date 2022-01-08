@@ -7,8 +7,7 @@
 ``` javascript
 <React.StrictMode>
     <Router>
-      <Route path="/" component={App} />
+      <Route path="*" component={App} />
     </Router>
   </React.StrictMode>
   ```
-  
