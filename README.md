@@ -10,4 +10,9 @@
       <Route path="*" component={App} />
     </Router>
   </React.StrictMode>
-  ```
+```
+
+* Routes rather than Switch.
+* useHistory() is replaced by useNavigate()
+* useHistory with push but useNavigate without push
+* ``npm i date-fns -S`` => date package
