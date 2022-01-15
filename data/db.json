@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "post one",
+      "dateTime": "January 15, 2022 2:50:47 AM",
+      "body": "First post moreyldrvjfdnv"
+    },
+    {
+      "id": 2,
+      "title": "post Two",
+      "datetime": "July 01, 2022 11:17:36 AM",
+      "body": "second post"
+    },
+    {
+      "id": 3,
+      "title": "post three",
+      "dateTime": "January 15, 2022 2:54:22 AM",
+      "body": "third post more 22wsd"
+    }
+  ]
+}

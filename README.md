@@ -16,3 +16,4 @@
 * useHistory() is replaced by useNavigate()
 * useHistory with push but useNavigate without push
 * ``npm i date-fns -S`` => date package
+* ``npx json-server -p 3500 -w data/db.json``
