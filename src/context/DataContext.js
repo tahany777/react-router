@@ -1,7 +1,4 @@
 import { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
-import api from "../api/posts";
 import useAxiosFetch from "../hooks/useAxiosFetch";
 const DataContext = createContext({});
 
@@ -9,8 +6,6 @@ export const DataProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  
-  const navigate = useNavigate();
   const { data, fetchError, isLoading } = useAxiosFetch(
     "http://localhost:3500/posts"
   );
@@ -26,9 +21,7 @@ export const DataProvider = ({ children }) => {
     );
     setSearchResult(filteredResult.reverse());
   }, [posts, search]);
-  
-  
-  
+
   return (
     <DataContext.Provider
       value={{
