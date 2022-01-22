@@ -9,9 +9,11 @@ import Missing from "./Missing";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import api from './api/posts';
+import api from "./api/posts";
 import useWindowSize from "./hooks/useWindowSize";
 import EditPost from "./EditPost";
+import useAxiosFetch from "./hooks/useAxiosFetch";
+
 function App() {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
@@ -22,25 +24,32 @@ function App() {
   const [editBody, setEditBody] = useState("");
   const navigate = useNavigate();
   const { width } = useWindowSize();
+  const { data, fetchError, isLoading } = useAxiosFetch(
+    "http://localhost:3500/posts"
+  );
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get('/posts');
-        // if(response && response.data) setPosts(response.data);
-        setPosts(response.data);
-      } catch(err) {
-        if(err.response) {
-          //Not in the 200 response range
-          console.log(err.response.data.message);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(`Error: ${err.message}`);
-        }
-      }
-    }
-    fetchPosts()
-  }, []);
+    setPosts(data);
+  }, [data]);
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await api.get('/posts');
+  //       // if(response && response.data) setPosts(response.data);
+  //       setPosts(response.data);
+  //     } catch(err) {
+  //       if(err.response) {
+  //         //Not in the 200 response range
+  //         console.log(err.response.data.message);
+  //         console.log(err.response.status);
+  //         console.log(err.response.headers);
+  //       } else {
+  //         console.log(`Error: ${err.message}`);
+  //       }
+  //     }
+  //   }
+  //   fetchPosts()
+  // }, []);
   useEffect(() => {
     const filteredResult = posts.filter(
       (post) =>
@@ -55,8 +64,8 @@ function App() {
     const dateTime = format(new Date(), "MMMM dd, yyyy pp");
     const newPost = { id, title: postTitle, dateTime, body: postBody };
     try {
-      const response = await api.post('/posts', newPost);
-      const allPosts = [ ...posts, response.data ];
+      const response = await api.post("/posts", newPost);
+      const allPosts = [...posts, response.data];
       setPosts(allPosts);
       setPostTitle("");
       setPostBody("");
@@ -64,7 +73,6 @@ function App() {
     } catch (err) {
       console.log(`Error: ${err.message}`);
     }
-    
   };
   const handleDelete = async (id) => {
     try {
@@ -81,20 +89,32 @@ function App() {
     const updatedPost = { id, title: editTitle, dateTime, body: editBody };
     try {
       const response = await api.put(`/posts/${id}`, updatedPost);
-      setPosts(posts.map(post => posts.id === id ? { ...response.data } : post));
-      setEditTitle('');
-      setEditBody('');
-      navigate('/');
+      setPosts(
+        posts.map((post) => (posts.id === id ? { ...response.data } : post))
+      );
+      setEditTitle("");
+      setEditBody("");
+      navigate("/");
     } catch (err) {
       console.log(`Error: ${err.message}`);
     }
-  }
+  };
   return (
     <div className="App">
       <Header title="React JS Blog" width={width} />
       <Nav search={search} setSearch={setSearch} />
       <Routes>
-        <Route exact path="/" element={<Home posts={searchResult} />} />
+        <Route
+          exact
+          path="/"
+          element={
+            <Home
+              posts={searchResult}
+              fetchError={fetchError}
+              isLoading={isLoading}
+            />
+          }
+        />
         <Route
           exact
           path="/post"
