@@ -1,18 +1,28 @@
 import React from "react";
-import { useEffect, useContext, useState } from "react";
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import DataContext from "./context/DataContext";
 import { useNavigate } from "react-router-dom";
-import api from "./api/posts";
 import { format } from "date-fns";
-
+import { useStoreActions, useStoreState } from "easy-peasy";
+// import api from "./api/posts";
+// import DataContext from "./context/DataContext";
+// import { useEffect, useContext, useState } from "react";
 const EditPost = () => {
-  const { posts, setPosts } = useContext(DataContext);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [editTitle, setEditTitle] = useState("");
-  const [editBody, setEditBody] = useState("");
-  const post = posts.find((post) => post.id.toString() === id);
+  const editTitle = useStoreState((state) => state.editTitle);
+  const editBody = useStoreState((state) => state.editBody);
+  const editPost = useStoreActions((actions) => actions.savePost);
+  const setEditTitle = useStoreActions((actions) => actions.setEditTitle);
+  const setEditBody = useStoreActions((actions) => actions.setEditBody);
+  const getPostyId = useStoreState((state) => state.getPostById);
+  const post = getPostyId(id);
+
+  
+  // const [editTitle, setEditTitle] = useState("");
+  // const [editBody, setEditBody] = useState("");
+  // const post = posts.find((post) => post.id.toString() === id);
+  // const { posts, setPosts } = useContext(DataContext);
 
   useEffect(() => {
     if (post) {
@@ -23,17 +33,19 @@ const EditPost = () => {
   const handleEdit = async (id) => {
     const dateTime = format(new Date(), "MMMM dd, yyyy pp");
     const updatedPost = { id, title: editTitle, dateTime, body: editBody };
-    try {
-      const response = await api.put(`/posts/${id}`, updatedPost);
-      setPosts(
-        posts.map((post) => (posts.id === id ? { ...response.data } : post))
-      );
-      setEditTitle("");
-      setEditBody("");
-      navigate("/");
-    } catch (err) {
-      console.log(`Error: ${err.message}`);
-    }
+    // try {
+    //   const response = await api.put(`/posts/${id}`, updatedPost);
+    //   setPosts(
+    //     posts.map((post) => (posts.id === id ? { ...response.data } : post))
+    //   );
+    //   setEditTitle("");
+    //   setEditBody("");
+    //   navigate("/");
+    // } catch (err) {
+    //   console.log(`Error: ${err.message}`);
+    // }
+    editPost(updatedPost);
+    navigate(`/post/${id}`);
   };
   return (
     <main className="NewPost">
@@ -56,7 +68,7 @@ const EditPost = () => {
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
             />
-            <button type="submit" onClick={() => handleEdit(post.id)}>
+            <button type="button" onClick={() => handleEdit(post.id)}>
               Submit
             </button>
           </form>
